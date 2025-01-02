@@ -3,16 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import hashlib
 import re
-
-
-
-payload_2 = {
-    "Username": "admin",
-    "Password": "7a0efd0c9930d0ebdffbbc67f4f54dbe118e28c4f51f234dcd59af48d1d5b2ac",
-    "action": "login",
-    "_sessionTOKEN": "250159094715731874732429"
-}
-
+import os
 
 def get_token_from_xml(session):
     url = "http://192.168.1.1/function_module/login_module/login_page/logintoken_lua.lua"  # Token URL'si
@@ -74,7 +65,7 @@ _sessionToken = get_session_token(response)
 
 login_payload = {
    "Username": "admin",
-    "Password": calculate_password("INTERFACE_PASSWORD",get_token_from_xml(session)),
+    "Password": calculate_password("PASSWORDHERE",get_token_from_xml(session)),
     "action": "login",
     "_sessionTOKEN": _sessionToken
 }
@@ -83,8 +74,7 @@ login_response = session.post("http://192.168.1.1/", data=login_payload)
 
 if login_response.status_code == 200:
     print("Login başarılı!")
-    with open("abc.html", "w", encoding="utf-8") as file:
-        file.write(login_response.text)
+
 else:
     print("Login başarısız! Hata kodu:", login_response.status_code)
     print("Hata mesajı:", login_response.text)
@@ -127,8 +117,7 @@ resp = session.get("http://192.168.1.1/getpage.lua?pid=123&nextpage=ManagDiag_De
 
 
 if resp.status_code == 200:
-    with open("zeze.html", "w", encoding="utf-8") as file:
-        file.write(resp.text)
+    print("Page succesfully retrieved!")
 else:
     print("Failed to retrieve the page! Status code:", resp.status_code)
     print("Error message:", resp.text)
@@ -180,6 +169,14 @@ if response.status_code == 200:
 else:
     print("Restart request failed! Status code:", response.status_code)
     print("Error message:", response.text)
+
+os.system('cls')
+
+if "meşgul" in response.text:
+    print("Modem başarılı bir şekilde resetlendi.")
+else: print("Modem resetlenirken hata meydana geldi.")
+
+input("Çıkış yapmak için enter'a basınız.")
 
 
 
